@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int                   @id @default(autoincrement())
+  email                String                @unique
+  passwordHash         String?
+  googleId             String?               @unique
+  role                 String
+  isVerified           Boolean               @default(false)
+  createdAt            DateTime              @default(now())
+  seekerProfile        SeekerProfile?
+  sponsorProfile       SponsorProfile?
+  verificationRequests VerificationRequest[] @relation("Requester")
+  reviewedRequests     VerificationRequest[] @relation("Reviewer")
+  messages             Message[]
+  notifications        Notification[]
+  reports              PerformanceReport[]
+}
+
+model SeekerProfile {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  seekerType   String    @default("Other")
+  description  String?  
+  city         String?
+  phone        String?
+  audienceSize Int?
+  socialLinks  String?  
+  logoUrl      String?
+  listings     Listing[]
+}
+
+model SponsorProfile {
+  id                Int                  @id @default(autoincrement())
+  userId            Int                  @unique
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName      String
+  industry          String               @default("Other")
+  description       String?             
+  city              String?
+  phone             String?
+  budgetMin         Int?
+  budgetMax         Int?
+  preferredAudience String?
+  logoUrl           String?
+  requests          SponsorshipRequest[]
+  subscription      Subscription?
+}
+
+model VerificationRequest {
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  user         User         @relation("Requester", fields: [userId], references: [id], onDelete: Cascade)
+  documentUrl  String
+  status       String @default("PENDING")
+  reviewedById Int?
+  reviewedBy   User?        @relation("Reviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  createdAt    DateTime     @default(now())
+}
+
+model Listing {
+  id             Int                  @id @default(autoincrement())
+  seekerId       Int
+  seeker         SeekerProfile        @relation(fields: [seekerId], references: [id], onDelete: Cascade)
+  title          String
+  category       String
+  description    String              
+  city           String
+  eventDate      DateTime?
+  targetAudience String?
+  expectedReach  Int                  @default(0)
+  supportType    String               @default("Money")
+  imageUrl       String?
+  status         String        @default("PUBLISHED")
+  isPromoted     Boolean              @default(false)
+  createdAt      DateTime             @default(now())
+  packages       Package[]
+  requests       SponsorshipRequest[]
+  promotions     PromotedListing[]
+}
+
+model Package {
+  id       Int                  @id @default(autoincrement())
+  listingId Int
+  listing  Listing              @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  name     String
+  price    Int
+  benefits String              
+  requests SponsorshipRequest[]
+}
+
+model SponsorshipRequest {
+  id        Int            @id @default(autoincrement())
+  listingId Int
+  listing   Listing        @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  packageId Int
+  package   Package        @relation(fields: [packageId], references: [id])
+  sponsorId Int
+  sponsor   SponsorProfile @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  message   String        
+  status    String  @default("PENDING")
+  createdAt DateTime       @default(now())
+  messages  Message[]
+  booking   Booking?
+}
+
+model Message {
+  id        Int                @id @default(autoincrement())
+  requestId Int
+  request   SponsorshipRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  senderId  Int
+  sender    User               @relation(fields: [senderId], references: [id])
+  content   String            
+  sentAt    DateTime           @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id          Int                 @id @default(autoincrement())
+  requestId   Int                 @unique
+  request     SponsorshipRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  agreedValue Int
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String       @default("CONFIRMED")
+  createdAt   DateTime            @default(now())
+  reports     PerformanceReport[]
+}
+
+model PerformanceReport {
+  id           Int      @id @default(autoincrement())
+  bookingId    Int
+  booking      Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  reportedById Int
+  reportedBy   User     @relation(fields: [reportedById], references: [id])
+  reach        Int      @default(0)
+  engagement   Float    @default(0)
+  reportedSales Int     @default(0)
+  notes        String? 
+  createdAt    DateTime @default(now())
+}
+
+model PromotedListing {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  fee       Int      @default(0)
+}
+
+model Subscription {
+  id        Int            @id @default(autoincrement())
+  sponsorId Int            @unique
+  sponsor   SponsorProfile @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  plan      String         @default("BASIC")
+  status    String         @default("ACTIVE")
+  startDate DateTime       @default(now())
+}
