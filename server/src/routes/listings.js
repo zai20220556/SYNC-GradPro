@@ -37,6 +37,17 @@ router.get('/', async (req, res) => {
   res.json({ listings });
 });
 
+// My listings (seeker): GET /listings/mine. Must stay above "/:id".
+router.get('/mine', requireAuth, requireRole('SEEKER'), async (req, res) => {
+  const profile = await prisma.seekerProfile.findUnique({ where: { userId: req.user.id } });
+  const listings = await prisma.listing.findMany({
+    where: { seekerId: profile.id },
+    include: { packages: true },
+    orderBy: { createdAt: 'desc' },
+  });
+  res.json({ listings });
+});
+
 router.get('/:id', async (req, res) => {
   const listing = await prisma.listing.findUnique({
     where: { id: Number(req.params.id) },
@@ -62,6 +73,15 @@ router.post('/', requireAuth, requireRole('SEEKER'), async (req, res) => {
     include: { packages: true },
   });
   res.status(201).json({ listing });
+});
+
+router.delete('/:id', requireAuth, requireRole('SEEKER'), async (req, res) => {
+  const id = Number(req.params.id);
+  const profile = await prisma.seekerProfile.findUnique({ where: { userId: req.user.id } });
+  const listing = await prisma.listing.findUnique({ where: { id } });
+  if (!listing || listing.seekerId !== profile.id) return res.status(404).json({ error: 'Listing not found.' });
+  await prisma.listing.delete({ where: { id } });
+  res.json({ ok: true });
 });
 
 export default router;

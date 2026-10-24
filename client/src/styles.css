@@ -30,3 +30,8 @@ input,select{font:inherit;color:var(--ink);background:var(--surface);border:1px 
 .steps li::before{content:counter(s);font:600 28px var(--serif);color:var(--sage)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
 .fld{display:grid;gap:4px;margin-bottom:14px}.fld label{font-weight:500;font-size:14px}
+textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.plain{color:inherit;text-decoration:none}
+.pkgbox{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}

@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.js';
 import listingRoutes from './routes/listings.js';
+import profileRoutes from './routes/profile.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
 app.get('/health', (req, res) => res.json({ ok: true, name: 'SYNC API' }));
 app.use('/auth', authRoutes);
 app.use('/listings', listingRoutes);
+app.use('/profile', profileRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

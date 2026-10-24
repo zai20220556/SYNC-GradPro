@@ -19,6 +19,8 @@ export default function Header() {
       </Link>
       <nav className="nav" aria-label="Main">
         <NavLink to="/browse">{t('nav.browse')}</NavLink>
+        {user?.role === 'SEEKER' && <NavLink to="/post">{t('nav.post')}</NavLink>}
+        {user && <NavLink to="/profile">{t('nav.profile')}</NavLink>}
         {user ? (
           <button className="link" onClick={async () => { await logout(); navigate('/'); }}>{t('nav.logout')}</button>
         ) : (

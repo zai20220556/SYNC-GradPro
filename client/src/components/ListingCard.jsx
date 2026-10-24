@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export default function ListingCard({ listing }) {
@@ -10,7 +11,7 @@ export default function ListingCard({ listing }) {
         <span className="tag">{listing.city}</span>
         {listing.isPromoted && <span className="tag promo">Promoted</span>}
       </div>
-      <h3>{listing.title}</h3>
+      <h3><Link className="plain" to={'/listings/' + listing.id}>{listing.title}</Link></h3>
       <p className="muted">
         {listing.seeker.name}
         {listing.seeker.user?.isVerified ? ` · ${t('browse.verified')}` : ''}
