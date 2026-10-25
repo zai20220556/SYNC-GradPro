@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -30,12 +30,12 @@ model SeekerProfile {
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
   seekerType   String    @default("Other")
-  description  String?  
+  description  String? @db.Text
   city         String?
   phone        String?
   audienceSize Int?
-  socialLinks  String?  
-  logoUrl      String?
+  socialLinks  String? @db.Text
+  logoUrl      String? @db.VarChar(500)
   listings     Listing[]
 }
 
@@ -45,13 +45,13 @@ model SponsorProfile {
   user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   businessName      String
   industry          String               @default("Other")
-  description       String?             
+  description       String? @db.Text
   city              String?
   phone             String?
   budgetMin         Int?
   budgetMax         Int?
   preferredAudience String?
-  logoUrl           String?
+  logoUrl           String? @db.VarChar(500)
   requests          SponsorshipRequest[]
   subscription      Subscription?
 }
@@ -60,7 +60,7 @@ model VerificationRequest {
   id           Int          @id @default(autoincrement())
   userId       Int
   user         User         @relation("Requester", fields: [userId], references: [id], onDelete: Cascade)
-  documentUrl  String
+  documentPublicId String @db.VarChar(500)
   status       String @default("PENDING")
   reviewedById Int?
   reviewedBy   User?        @relation("Reviewer", fields: [reviewedById], references: [id])
@@ -74,13 +74,13 @@ model Listing {
   seeker         SeekerProfile        @relation(fields: [seekerId], references: [id], onDelete: Cascade)
   title          String
   category       String
-  description    String              
+  description    String @db.Text
   city           String
   eventDate      DateTime?
   targetAudience String?
   expectedReach  Int                  @default(0)
   supportType    String               @default("Money")
-  imageUrl       String?
+  imageUrl       String? @db.VarChar(500)
   status         String        @default("PUBLISHED")
   isPromoted     Boolean              @default(false)
   createdAt      DateTime             @default(now())
@@ -95,7 +95,7 @@ model Package {
   listing  Listing              @relation(fields: [listingId], references: [id], onDelete: Cascade)
   name     String
   price    Int
-  benefits String              
+  benefits String @db.Text
   requests SponsorshipRequest[]
 }
 
@@ -107,7 +107,7 @@ model SponsorshipRequest {
   package   Package        @relation(fields: [packageId], references: [id])
   sponsorId Int
   sponsor   SponsorProfile @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
-  message   String        
+  message   String @db.Text
   status    String  @default("PENDING")
   createdAt DateTime       @default(now())
   messages  Message[]
@@ -120,7 +120,7 @@ model Message {
   request   SponsorshipRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
   senderId  Int
   sender    User               @relation(fields: [senderId], references: [id])
-  content   String            
+  content   String @db.Text
   sentAt    DateTime           @default(now())
 }
 
@@ -129,7 +129,7 @@ model Notification {
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      String
-  content   String
+  content   String @db.Text
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
@@ -155,7 +155,7 @@ model PerformanceReport {
   reach        Int      @default(0)
   engagement   Float    @default(0)
   reportedSales Int     @default(0)
-  notes        String? 
+  notes        String? @db.Text
   createdAt    DateTime @default(now())
 }
 

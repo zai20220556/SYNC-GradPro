@@ -14,6 +14,7 @@ const seekerSchema = z.object({
   city: z.string().optional(),
   phone: z.string().optional(),
   audienceSize: optionalInt,
+  logoUrl: z.string().url().max(500).optional(),
 });
 
 const sponsorSchema = z.object({
@@ -25,6 +26,7 @@ const sponsorSchema = z.object({
   budgetMin: optionalInt,
   budgetMax: optionalInt,
   preferredAudience: z.string().optional(),
+  logoUrl: z.string().url().max(500).optional(),
 });
 
 router.get('/', requireAuth, async (req, res) => {

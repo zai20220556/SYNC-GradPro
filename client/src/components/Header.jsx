@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../AuthContext.jsx';
 import { applyLanguage } from '../i18n.js';
+import NotificationBell from './NotificationBell.jsx';
 
 export default function Header() {
   const { t, i18n } = useTranslation();
@@ -20,6 +21,9 @@ export default function Header() {
       <nav className="nav" aria-label="Main">
         <NavLink to="/browse">{t('nav.browse')}</NavLink>
         {user?.role === 'SEEKER' && <NavLink to="/post">{t('nav.post')}</NavLink>}
+        {user && user.role !== 'ADMIN' && <NavLink to="/requests">{t('nav.requests')}</NavLink>}
+        {user && user.role !== 'ADMIN' && <NavLink to="/tracker">{t('nav.tracker')}</NavLink>}
+        {user?.role === 'ADMIN' && <NavLink to="/admin">{t('nav.admin')}</NavLink>}
         {user && <NavLink to="/profile">{t('nav.profile')}</NavLink>}
         {user ? (
           <button className="link" onClick={async () => { await logout(); navigate('/'); }}>{t('nav.logout')}</button>
@@ -29,6 +33,7 @@ export default function Header() {
             <Link className="btn" to="/register">{t('nav.register')}</Link>
           </>
         )}
+        {user && <NotificationBell />}
         <button className="link" onClick={() => applyLanguage(i18n.language === 'ar' ? 'en' : 'ar')}>
           {i18n.language === 'ar' ? 'English' : 'العربية'}
         </button>

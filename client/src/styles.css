@@ -35,3 +35,30 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 .plain{color:inherit;text-decoration:none}
 .pkgbox{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.pkg{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;background:var(--surface)}
+.pkg input{width:auto;margin-top:5px}.pkg b{display:block}
+.st{font-size:13px;font-weight:600;color:var(--sage)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:14px}
+
+.msgpanel{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.msg{padding:9px 12px;border-radius:12px;margin-bottom:8px;max-width:85%;background:var(--bg);border:1px solid var(--line)}
+.msg.me{margin-inline-start:auto;background:var(--green);color:var(--on-green);border-color:var(--green)}
+.bell{position:relative}
+.badge{background:var(--green);color:var(--on-green);border-radius:99px;font-size:12px;padding:1px 7px;margin-inline-start:6px}
+.bellmenu{position:absolute;inset-inline-end:0;top:100%;width:min(320px,86vw);max-height:320px;overflow:auto;z-index:8}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stats .panel{margin:0}.big{font:600 30px var(--serif);display:block}
+.bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin:4px 0 12px}
+.bar i{display:block;height:100%;background:var(--green)}
+.match{font-weight:600;color:var(--sage)}
+.inl{width:auto;margin-inline-end:6px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+
+.thumb{width:100%;max-height:160px;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px}
+.avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-inline-end:6px}
+.big-avatar{width:72px;height:72px;display:block;margin-bottom:8px}
+.hero-img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin:12px 0}
+input[type=file]{padding:8px}

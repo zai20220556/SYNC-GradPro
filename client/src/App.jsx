@@ -7,6 +7,10 @@ import Register from './pages/Register.jsx';
 import PostListing from './pages/PostListing.jsx';
 import ListingDetail from './pages/ListingDetail.jsx';
 import Profile from './pages/Profile.jsx';
+import Requests from './pages/Requests.jsx';
+import Tracker from './pages/Tracker.jsx';
+import Admin from './pages/Admin.jsx';
+import Compare from './pages/Compare.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
@@ -22,6 +26,10 @@ export default function App() {
           <Route path="/listings/:id" element={<ListingDetail />} />
           <Route path="/post" element={<ProtectedRoute role="SEEKER"><PostListing /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/requests" element={<ProtectedRoute><Requests /></ProtectedRoute>} />
+          <Route path="/tracker" element={<ProtectedRoute><Tracker /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute role="ADMIN"><Admin /></ProtectedRoute>} />
+          <Route path="/compare" element={<Compare />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

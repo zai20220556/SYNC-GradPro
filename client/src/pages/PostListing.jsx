@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { api } from '../api.js';
+import { api, uploadImage } from '../api.js';
 
 const CATEGORIES = ['Events', 'Sports', 'Creators', 'Student activities', 'Charity'];
 const CITIES = ['Amman', 'Irbid', 'Zarqa'];
@@ -13,8 +13,18 @@ export default function PostListing() {
   const [f, setF] = useState({ title: '', category: 'Events', city: 'Amman', description: '', expectedReach: '', targetAudience: '', eventDate: '' });
   const [packages, setPackages] = useState([{ ...emptyPackage }]);
   const [error, setError] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [busy, setBusy] = useState(false);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
   const setPkg = (i, k, v) => setPackages(packages.map((p, j) => (j === i ? { ...p, [k]: v } : p)));
+
+  async function pickImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBusy(true); setError('');
+    try { setImageUrl(await uploadImage(file)); } catch (err) { setError(err.message); }
+    setBusy(false);
+  }
 
   async function submit(e) {
     e.preventDefault();
@@ -25,6 +35,7 @@ export default function PostListing() {
         packages: packages.map((p) => ({ name: p.name, price: Number(p.price) || 0, benefits: p.benefits })),
       };
       if (f.targetAudience) body.targetAudience = f.targetAudience;
+      if (imageUrl) body.imageUrl = imageUrl;
       if (f.eventDate) body.eventDate = new Date(f.eventDate).toISOString();
       const d = await api('/listings', { method: 'POST', body });
       navigate('/listings/' + d.listing.id);
@@ -44,6 +55,13 @@ export default function PostListing() {
         <div className="fld"><label htmlFor="aud">{t('post.audience')}</label><input id="aud" value={f.targetAudience} onChange={set('targetAudience')} /></div>
         <div className="fld"><label htmlFor="reach">{t('post.reach')}</label><input id="reach" type="number" min="0" value={f.expectedReach} onChange={set('expectedReach')} /></div>
         <div className="fld"><label htmlFor="date">{t('post.date')}</label><input id="date" type="date" value={f.eventDate} onChange={set('eventDate')} /></div>
+
+        <div className="fld">
+          <label htmlFor="photo">{t('up.photo')}</label>
+          <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={pickImage} />
+          <small className="muted">{busy ? t('up.uploading') : t('up.hint')}</small>
+          {imageUrl && <img className="thumb" src={imageUrl} alt="" />}
+        </div>
 
         <h3>{t('post.packages')}</h3>
         {packages.map((p, i) => (
