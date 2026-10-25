@@ -44,7 +44,7 @@ export default function ListingDetail() {
       </p>
       {listing.imageUrl && <img className="hero-img" src={listing.imageUrl} alt="" />}
       <div className="panel">
-        <p><b>{listing.seeker.name}</b> · {listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
+        <p>{listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}<b>{listing.seeker.name}</b> · {listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
         {listing.targetAudience && <p>{t('detail.audience')}: {listing.targetAudience}</p>}
         {listing.eventDate && <p>{t('detail.date')}: {new Date(listing.eventDate).toLocaleDateString()}</p>}
         <p>{listing.description}</p>
@@ -56,7 +56,7 @@ export default function ListingDetail() {
           {listing.packages.map((p) => (
             <label className="pkg" key={p.id}>
               <input type="radio" name="pk" checked={pkgId === p.id} onChange={() => setPkgId(p.id)} />
-              <span><b>{p.name} · {p.price} JOD</b><span className="muted">{p.benefits}</span></span>
+              <span><b>{p.name} · {p.price} JOD</b><span className="muted benefits">{p.benefits}</span></span>
             </label>
           ))}
           <div className="fld">
@@ -73,7 +73,7 @@ export default function ListingDetail() {
               <div className="card" key={p.id}>
                 <h3>{p.name}</h3>
                 <p className="price">{p.price} JOD</p>
-                <p className="muted">{p.benefits}</p>
+                <p className="muted benefits">{p.benefits}</p>
               </div>
             ))}
           </div>
