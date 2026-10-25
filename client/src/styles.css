@@ -59,7 +59,7 @@ th{font-weight:600;color:var(--muted);font-size:14px}
 
 .thumb{width:100%;max-height:160px;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px}
 .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-inline-end:6px}
-.benefits{display:block;white-space:pre-line}
+.benefits{display:block;margin:6px 0 0;padding-inline-start:18px;list-style:disc}
 .big-avatar{width:72px;height:72px;display:block;margin-bottom:8px}
 .hero-img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin:12px 0}
 input[type=file]{padding:8px}

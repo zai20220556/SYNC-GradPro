@@ -1,3 +1,4 @@
+import { formatDate } from '../format.js';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
@@ -16,7 +17,7 @@ function Bar({ label, value, max, text }) {
 }
 
 export default function Tracker() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -125,7 +126,7 @@ export default function Tracker() {
               <h3 style={{ marginTop: 20 }}>{t('dash.history')}</h3>
               {reports.map((r) => (
                 <p key={r.id} className="muted">
-                  {new Date(r.createdAt).toLocaleDateString()} · {r.mine ? t('dash.you') : t('dash.other')}: {r.reach.toLocaleString()} / {r.engagement}% / {r.reportedSales}{r.notes ? ` · ${r.notes}` : ''}
+                  {formatDate(r.createdAt, i18n.language)} · {r.mine ? t('dash.you') : t('dash.other')}: {r.reach.toLocaleString()} / {r.engagement}% / {r.reportedSales}{r.notes ? ` · ${r.notes}` : ''}
                 </p>
               ))}
             </>
