@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
 import ListingCard from '../components/ListingCard.jsx';
+import { CATEGORIES, catLabel } from '../categories.js';
 
-const CATEGORIES = ['Events', 'Sports', 'Creators', 'Student activities', 'Charity'];
 const CITIES = ['Amman', 'Irbid', 'Zarqa'];
 
 export default function Browse() {
@@ -49,7 +49,7 @@ export default function Browse() {
         <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('browse.search')} aria-label={t('browse.search')} />
         <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Category">
           <option value="">{t('browse.all')}</option>
-          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+          {CATEGORIES.map((c) => <option key={c} value={c}>{catLabel(t, c)}</option>)}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)} aria-label="City">
           <option value="">{t('browse.allCities')}</option>

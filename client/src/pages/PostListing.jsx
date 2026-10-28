@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api, uploadImage } from '../api.js';
+import { CATEGORIES, catLabel } from '../categories.js';
 
-const CATEGORIES = ['Events', 'Sports', 'Creators', 'Student activities', 'Charity'];
 const CITIES = ['Amman', 'Irbid', 'Zarqa'];
 const emptyPackage = { name: '', price: '', benefits: '' };
 
@@ -48,7 +48,7 @@ export default function PostListing() {
       <form className="panel" onSubmit={submit}>
         <div className="fld"><label htmlFor="title">{t('post.name')}</label><input id="title" value={f.title} onChange={set('title')} required minLength={3} /></div>
         <div className="fld"><label htmlFor="cat">{t('post.category')}</label>
-          <select id="cat" value={f.category} onChange={set('category')}>{CATEGORIES.map((c) => <option key={c}>{c}</option>)}</select></div>
+          <select id="cat" value={f.category} onChange={set('category')}>{CATEGORIES.map((c) => <option key={c} value={c}>{catLabel(t, c)}</option>)}</select></div>
         <div className="fld"><label htmlFor="city">{t('post.city')}</label>
           <select id="city" value={f.city} onChange={set('city')}>{CITIES.map((c) => <option key={c}>{c}</option>)}</select></div>
         <div className="fld"><label htmlFor="desc">{t('post.description')}</label><textarea id="desc" rows="4" value={f.description} onChange={set('description')} required minLength={10} /></div>

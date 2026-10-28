@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { catLabel } from '../categories.js';
 
 export default function ListingCard({ listing, match, selected, onToggle }) {
   const { t } = useTranslation();
@@ -8,7 +9,7 @@ export default function ListingCard({ listing, match, selected, onToggle }) {
     <article className="card">
       {listing.imageUrl && <img className="thumb" src={listing.imageUrl} alt="" loading="lazy" />}
       <div>
-        <span className="tag">{listing.category}</span>
+        <span className="tag">{catLabel(t, listing.category)}</span>
         <span className="tag">{listing.city}</span>
         {listing.isPromoted && <span className="tag promo">Promoted</span>}
       </div>

@@ -1,3 +1,4 @@
+import { catLabel } from '../categories.js';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ export default function Compare() {
   }
 
   const rows = [
-    ['category', (l) => l.category],
+    ['category', (l) => catLabel(t, l.category)],
     ['city', (l) => l.city],
     ['reach', (l) => l.expectedReach.toLocaleString()],
     ['audience', (l) => l.targetAudience || '-'],

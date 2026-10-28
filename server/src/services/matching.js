@@ -2,11 +2,11 @@
 // Four rules: category fit (30), city (20), budget (30), audience (20).
 
 const CATEGORY_FIT = {
-  'Restaurant or cafe': ['Events', 'Creators', 'Student activities'],
-  'Gym or fitness': ['Sports', 'Events'],
-  'Bank or financial institution': ['Events', 'Student activities', 'Charity'],
-  'Telecommunications': ['Events', 'Creators', 'Student activities'],
-  'Clothing, beauty, or retail': ['Creators', 'Events'],
+  'Restaurant or cafe': ['Events', 'Creators', 'Student activities', 'Music and arts', 'Culture and community'],
+  'Gym or fitness': ['Sports', 'Events', 'Education and workshops'],
+  'Bank or financial institution': ['Events', 'Student activities', 'Charity', 'Education and workshops', 'Tech and startups'],
+  'Telecommunications': ['Events', 'Creators', 'Student activities', 'Gaming and esports', 'Tech and startups', 'Music and arts'],
+  'Clothing, beauty, or retail': ['Creators', 'Events', 'Music and arts', 'Gaming and esports'],
 };
 
 function words(text) {

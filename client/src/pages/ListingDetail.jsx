@@ -5,6 +5,7 @@ import { api } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
 import Benefits from '../components/Benefits.jsx';
 import { formatDate } from '../format.js';
+import { catLabel } from '../categories.js';
 
 export default function ListingDetail() {
   const { id } = useParams();
@@ -40,7 +41,7 @@ export default function ListingDetail() {
       <Link className="muted" to="/browse">{t('detail.back')}</Link>
       <h1 style={{ fontSize: 44, marginTop: 8 }}>{listing.title}</h1>
       <p>
-        <span className="tag">{listing.category}</span>
+        <span className="tag">{catLabel(t, listing.category)}</span>
         <span className="tag">{listing.city}</span>
         {listing.seeker.user?.isVerified && <span className="tag">{t('browse.verified')}</span>}
       </p>
