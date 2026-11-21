@@ -18,7 +18,10 @@ export default function Admin() {
 
   async function toggle(u) { await api('/admin/users/' + u.id, { method: 'PATCH', body: { isVerified: !u.isVerified } }); load(); }
   async function review(v, status) { await api('/admin/verifications/' + v.id, { method: 'PATCH', body: { status } }); load(); }
-  async function remove(l) { await api('/admin/listings/' + l.id, { method: 'DELETE' }); load(); }
+  async function remove(l) {
+    setError('');
+    try { await api('/admin/listings/' + l.id, { method: 'DELETE' }); load(); } catch (e) { setError(e.message); }
+  }
 
   return (
     <div className="page">

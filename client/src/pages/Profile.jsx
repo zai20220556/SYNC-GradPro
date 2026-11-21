@@ -59,8 +59,10 @@ export default function Profile() {
   }
 
   async function remove(id) {
-    await api('/listings/' + id, { method: 'DELETE' });
-    setMine(mine.filter((l) => l.id !== id));
+    try {
+      await api('/listings/' + id, { method: 'DELETE' });
+      setMine(mine.filter((l) => l.id !== id));
+    } catch (e) { setError(e.message); }
   }
 
   if (!form) return <div className="page" />;

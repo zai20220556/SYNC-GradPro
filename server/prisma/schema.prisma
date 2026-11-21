@@ -104,7 +104,7 @@ model SponsorshipRequest {
   listingId Int
   listing   Listing        @relation(fields: [listingId], references: [id], onDelete: Cascade)
   packageId Int
-  package   Package        @relation(fields: [packageId], references: [id])
+  package   Package        @relation(fields: [packageId], references: [id], onDelete: Cascade)
   sponsorId Int
   sponsor   SponsorProfile @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
   message   String @db.Text
