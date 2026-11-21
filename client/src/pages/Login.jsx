@@ -25,8 +25,11 @@ export default function Login() {
         <div className="fld"><label htmlFor="pw">{t('auth.password')}</label>
           <input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
         {error && <p className="error">{error}</p>}
-        <button className="btn" type="submit">{t('auth.submitLogin')}</button>
-        <p className="muted">{t('auth.noAccount')} <Link to="/register">{t('nav.register')}</Link></p>
+        <button className="btn block" type="submit">{t('auth.submitLogin')}</button>
+        <div className="switch">
+          <p className="muted">{t('auth.noAccount')}</p>
+          <Link className="btn alt block" to="/register">{t('auth.submitRegister')}</Link>
+        </div>
       </form>
     </div>
   );

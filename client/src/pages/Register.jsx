@@ -33,8 +33,11 @@ export default function Register() {
           <input id="pw" type="password" value={form.password} onChange={set('password')} required minLength={8} />
           <small className="muted">{t('auth.passwordHint')}</small></div>
         {error && <p className="error">{error}</p>}
-        <button className="btn" type="submit">{t('auth.submitRegister')}</button>
-        <p className="muted">{t('auth.haveAccount')} <Link to="/login">{t('nav.login')}</Link></p>
+        <button className="btn block" type="submit">{t('auth.submitRegister')}</button>
+        <div className="switch">
+          <p className="muted">{t('auth.haveAccount')}</p>
+          <Link className="btn alt block" to="/login">{t('auth.submitLogin')}</Link>
+        </div>
       </form>
     </div>
   );
