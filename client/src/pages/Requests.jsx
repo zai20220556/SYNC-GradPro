@@ -58,7 +58,7 @@ export default function Requests() {
               <button className="btn" onClick={() => record(r)}>{t('req.record')}</button>
             </div>
           )}
-          {r.booking && <p><Link to="/tracker">{t('req.inTracker')}</Link></p>}
+          {r.booking && <p><Link className="btn alt" to="/tracker">{t('req.inTracker')}</Link></p>}
           <button className="link" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? t('msg.hide') : t('msg.show')}</button>
           {open === r.id && <MessagePanel requestId={r.id} />}
         </div>

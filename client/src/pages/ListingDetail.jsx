@@ -49,7 +49,7 @@ export default function ListingDetail() {
       <div className="panel">
         <p>{listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}<b>{listing.seeker.name}</b> · {listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
         {listing.seeker.website && (
-          <p>{t('detail.website')}: <a href={listing.seeker.website} target="_blank" rel="noopener noreferrer">{listing.seeker.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></p>
+          <p>{t('detail.website')}: <a className="text-link" href={listing.seeker.website} target="_blank" rel="noopener noreferrer">{listing.seeker.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></p>
         )}
         {listing.targetAudience && <p>{t('detail.audience')}: {listing.targetAudience}</p>}
         {listing.eventDate && <p>{t('detail.date')}: {formatDate(listing.eventDate, i18n.language)}</p>}
@@ -83,7 +83,12 @@ export default function ListingDetail() {
               </div>
             ))}
           </div>
-          {!user && <p className="muted" style={{ marginTop: 16 }}><Link to="/login">{t('nav.login')}</Link> {t('detail.loginToRequest')}</p>}
+          {!user && (
+            <div className="cta-row">
+              <Link className="btn" to="/login">{t('nav.login')}</Link>
+              <span className="muted">{t('detail.loginToRequest')}</span>
+            </div>
+          )}
         </>
       )}
     </div>

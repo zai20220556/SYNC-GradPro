@@ -107,7 +107,7 @@ export default function Profile() {
           {mine.length === 0 && <p className="muted">{t('profile.noListings')} <Link to="/post">{t('nav.post')}</Link></p>}
           {mine.map((l) => (
             <div className="panel row" key={l.id}>
-              <Link to={'/listings/' + l.id}>{l.title}</Link>
+              <Link className="text-link" to={'/listings/' + l.id}>{l.title}</Link>
               <button className="link" onClick={() => remove(l.id)}>{t('profile.delete')}</button>
             </div>
           ))}
