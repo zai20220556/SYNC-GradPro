@@ -51,7 +51,7 @@ router.get('/mine', requireAuth, requireRole('SEEKER'), async (req, res) => {
 router.get('/:id', async (req, res) => {
   const listing = await prisma.listing.findUnique({
     where: { id: Number(req.params.id) },
-    include: { packages: true, seeker: { select: { name: true, logoUrl: true, user: { select: { isVerified: true } } } } },
+    include: { packages: true, seeker: { select: { name: true, logoUrl: true, website: true, user: { select: { isVerified: true } } } } },
   });
   if (!listing) return res.status(404).json({ error: 'Listing not found.' });
   res.json({ listing });

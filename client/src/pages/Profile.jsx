@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api, upload, uploadImage } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
 
-const SEEKER_FIELDS = [['name', 'text'], ['seekerType', 'text'], ['city', 'text'], ['phone', 'text'], ['audienceSize', 'number'], ['description', 'area']];
+const SEEKER_FIELDS = [['name', 'text'], ['seekerType', 'text'], ['city', 'text'], ['phone', 'text'], ['website', 'text'], ['audienceSize', 'number'], ['description', 'area']];
 const SPONSOR_FIELDS = [['businessName', 'text'], ['industry', 'text'], ['city', 'text'], ['phone', 'text'], ['budgetMin', 'number'], ['budgetMax', 'number'], ['preferredAudience', 'text'], ['description', 'area']];
 
 export default function Profile() {

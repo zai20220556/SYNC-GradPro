@@ -7,6 +7,23 @@ const router = Router();
 
 const optionalInt = z.preprocess((v) => (v === '' || v == null ? undefined : Number(v)), z.number().int().min(0).optional());
 
+// Optional website: blank clears it, a missing http(s):// is added, and only http or https links are accepted.
+const optionalWebsite = z.preprocess(
+  (v) => {
+    if (v == null) return undefined;
+    const s = String(v).trim();
+    if (s === '') return null;
+    return /^[a-z][a-z0-9+.-]*:/i.test(s) ? s : 'https://' + s;
+  },
+  z
+    .string()
+    .max(300, 'The website address is too long.')
+    .url('Enter a valid website address.')
+    .refine((u) => /^https?:\/\//i.test(u), 'The website must start with http:// or https://')
+    .nullable()
+    .optional()
+);
+
 const seekerSchema = z.object({
   name: z.string().min(2),
   seekerType: z.string().min(2).optional(),
@@ -14,6 +31,7 @@ const seekerSchema = z.object({
   city: z.string().optional(),
   phone: z.string().optional(),
   audienceSize: optionalInt,
+  website: optionalWebsite,
   logoUrl: z.string().url().max(500).optional(),
 });
 

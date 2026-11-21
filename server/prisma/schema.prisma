@@ -36,6 +36,7 @@ model SeekerProfile {
   audienceSize Int?
   socialLinks  String? @db.Text
   logoUrl      String? @db.VarChar(500)
+  website      String? @db.VarChar(300)
   listings     Listing[]
 }
 

@@ -48,6 +48,9 @@ export default function ListingDetail() {
       {listing.imageUrl && <img className="hero-img" src={listing.imageUrl} alt="" />}
       <div className="panel">
         <p>{listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}<b>{listing.seeker.name}</b> · {listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
+        {listing.seeker.website && (
+          <p>{t('detail.website')}: <a href={listing.seeker.website} target="_blank" rel="noopener noreferrer">{listing.seeker.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></p>
+        )}
         {listing.targetAudience && <p>{t('detail.audience')}: {listing.targetAudience}</p>}
         {listing.eventDate && <p>{t('detail.date')}: {formatDate(listing.eventDate, i18n.language)}</p>}
         <p>{listing.description}</p>
