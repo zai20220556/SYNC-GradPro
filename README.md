@@ -49,3 +49,4 @@ First time: `cd server && npm install && npx prisma migrate dev --name init && n
 - Start command: `cd server && node src/index.js`
 - Environment variables: `NODE_ENV=production`, `DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`,
   `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- Optional AI chat: `GROQ_API_KEY`. Without it, the built-in SYNC Assistant answers instead.

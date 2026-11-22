@@ -24,6 +24,19 @@ export function requireAuth(req, res, next) {
   }
 }
 
+// For public routes that should recognize a logged-in user when there is one.
+export function optionalAuth(req, res, next) {
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      req.user = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+      req.user = undefined;
+    }
+  }
+  next();
+}
+
 export function requireRole(...roles) {
   return (req, res, next) => {
     if (!roles.includes(req.user?.role)) {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
@@ -47,6 +47,8 @@ export default function Browse() {
   const [catalog, setCatalog] = useState([]);
   const [titles, setTitles] = useState({});
   const [scores, setScores] = useState({});
+  const [reasons, setReasons] = useState({});
+  const [matchInfo, setMatchInfo] = useState(null);
   const [status, setStatus] = useState('loading');
   const [attempt, setAttempt] = useState(0);
 
@@ -115,11 +117,11 @@ export default function Browse() {
   }, [status, pickedParam, titles]);
 
   useEffect(() => {
-    if (user?.role !== 'SPONSOR') { setScores({}); return; }
+    if (user?.role !== 'SPONSOR') { setScores({}); setReasons({}); setMatchInfo(null); return; }
     api('/matches').then((d) => {
-      const map = {};
-      d.matches.forEach((m) => { map[m.listingId] = m.score; });
-      setScores(map);
+      setScores(Object.fromEntries(d.matches.map((m) => [m.listingId, m.score])));
+      setReasons(Object.fromEntries(d.matches.map((m) => [m.listingId, m.reasons])));
+      setMatchInfo({ ready: d.ready, missing: d.missing });
     }).catch(() => {});
   }, [user]);
 
@@ -161,7 +163,16 @@ export default function Browse() {
           <option value="date">{t('browse.sortDate')}</option>
         </select>
       </div>
-      {user?.role === 'SPONSOR' && <p className="muted">{t('cmp.sorted')}</p>}
+      {matchInfo?.ready && <p className="muted">{t('cmp.sorted')}</p>}
+      {matchInfo && !matchInfo.ready && (
+        <div className="match-prompt">
+          <div>
+            <b>{t('match.promptTitle')}</b>
+            <p>{t('match.promptText', { missing: new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(matchInfo.missing.map((m) => t('match.missing.' + m))) })}</p>
+          </div>
+          <Link className="btn" to="/profile">{t('match.promptCta')}</Link>
+        </div>
+      )}
       <div className="result-bar">
         <p className="muted" role="status">
           {status === 'loading' ? t('browse.loading') : status === 'ready' ? t('browse.results', { count: listings.length }) : ''}
@@ -195,6 +206,7 @@ export default function Browse() {
               key={l.id}
               listing={l}
               match={scores[l.id]}
+              reasons={reasons[l.id]}
               selected={selected.includes(l.id)}
               compareDisabled={isFull && !selected.includes(l.id)}
               onToggle={toggle}

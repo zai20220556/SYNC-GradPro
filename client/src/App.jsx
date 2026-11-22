@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Link, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Header from './components/Header.jsx';
 import Home from './pages/Home.jsx';
@@ -12,6 +12,8 @@ import Requests from './pages/Requests.jsx';
 import Tracker from './pages/Tracker.jsx';
 import Admin from './pages/Admin.jsx';
 import Compare from './pages/Compare.jsx';
+import Help from './pages/Help.jsx';
+import AssistantChat from './components/AssistantChat.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
@@ -32,10 +34,15 @@ export default function App() {
           <Route path="/tracker" element={<ProtectedRoute><Tracker /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute role="ADMIN"><Admin /></ProtectedRoute>} />
           <Route path="/compare" element={<Compare />} />
+          <Route path="/help" element={<Help />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      <footer className="demo-note">{t('demoNotice')}</footer>
+      <footer className="demo-note">
+        <Link className="text-link" to="/help">{t('nav.help')}</Link>
+        <span>{t('demoNotice')}</span>
+      </footer>
+      <AssistantChat />
     </>
   );
 }

@@ -17,20 +17,26 @@ export default function Login() {
   }
 
   return (
-    <div className="page narrow">
-      <h2>{t('auth.loginTitle')}</h2>
-      <form className="panel" onSubmit={submit}>
-        <div className="fld"><label htmlFor="email">{t('auth.email')}</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-        <div className="fld"><label htmlFor="pw">{t('auth.password')}</label>
-          <input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
-        {error && <p className="error">{error}</p>}
-        <button className="btn block" type="submit">{t('auth.submitLogin')}</button>
-        <div className="switch">
-          <p className="muted">{t('auth.noAccount')}</p>
-          <Link className="btn alt block" to="/register">{t('auth.submitRegister')}</Link>
-        </div>
-      </form>
+    <div className="auth">
+      <div className="auth-main">
+        <form className="auth-form" onSubmit={submit}>
+          <h1>{t('auth.loginTitle')}</h1>
+          <div className="fld"><label htmlFor="email">{t('auth.email')}</label>
+            <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+          <div className="fld"><label htmlFor="pw">{t('auth.password')}</label>
+            <input id="pw" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
+          {error && <p className="error" role="alert">{error}</p>}
+          <button className="btn block" type="submit">{t('auth.submitLogin')}</button>
+          <div className="switch">
+            <p className="muted">{t('auth.noAccount')}</p>
+            <Link className="btn alt block" to="/register">{t('auth.submitRegister')}</Link>
+          </div>
+        </form>
+      </div>
+      <aside className="auth-side">
+        <h2>{t('tagline')}</h2>
+        <p>{t('heroText')}</p>
+      </aside>
     </div>
   );
 }

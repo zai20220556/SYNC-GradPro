@@ -80,4 +80,35 @@ router.delete('/listings/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
+router.get('/support', async (req, res) => {
+  const tickets = await prisma.supportTicket.findMany({ orderBy: [{ status: 'asc' }, { createdAt: 'desc' }] });
+  res.json({ tickets });
+});
+
+router.patch('/support/:id', async (req, res) => {
+  const parsed = z.object({
+    adminReply: z.string().trim().min(1, 'Write a reply.').max(2000).optional(),
+    status: z.enum(['OPEN', 'RESOLVED']).optional(),
+  }).refine((d) => d.adminReply !== undefined || d.status !== undefined, 'Nothing to update.').safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+
+  const current = await prisma.supportTicket.findUnique({ where: { id: Number(req.params.id) } });
+  if (!current) return res.status(404).json({ error: 'Support message not found.' });
+
+  const { adminReply, status } = parsed.data;
+  const ticket = await prisma.supportTicket.update({
+    where: { id: current.id },
+    data: {
+      ...(adminReply !== undefined ? { adminReply } : {}),
+      ...(status ? { status, resolvedAt: status === 'RESOLVED' ? new Date() : null } : {}),
+    },
+  });
+  if (current.userId && adminReply !== undefined && adminReply !== current.adminReply) {
+    await prisma.notification.create({
+      data: { userId: current.userId, type: 'support', content: `SYNC replied to your support message: "${current.subject}".` },
+    });
+  }
+  res.json({ ticket });
+});
+
 export default router;

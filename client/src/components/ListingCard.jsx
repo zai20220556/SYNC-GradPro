@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { catLabel, cityLabel } from '../categories.js';
 import { formatDate, formatNumber } from '../format.js';
 
-export default function ListingCard({ listing, match, selected, compareDisabled = false, onToggle }) {
+export default function ListingCard({ listing, match, reasons = [], selected, compareDisabled = false, onToggle }) {
   const { t, i18n } = useTranslation();
   const { search } = useLocation();
   const lowest = Math.min(...listing.packages.map((p) => p.price));
@@ -11,15 +11,14 @@ export default function ListingCard({ listing, match, selected, compareDisabled 
   const isVerified = Boolean(listing.seeker.user?.isVerified);
   return (
     <article className="card listing-card">
-      {listing.imageUrl && (
-        <Link to={to} state={{ from: search }} tabIndex={-1} aria-hidden="true">
-          <img className="thumb" src={listing.imageUrl} alt="" loading="lazy" />
-        </Link>
-      )}
-      <div className="card-tags">
-        <span className="tag">{catLabel(t, listing.category)}</span>
-        <span className="tag">{cityLabel(t, listing.city)}</span>
-        {listing.isPromoted && <span className="tag promo">{t('browse.promoted')}</span>}
+      {listing.imageUrl && <img className="thumb" src={listing.imageUrl} alt="" loading="lazy" />}
+      <div className="card-top">
+        <div className="card-tags">
+          <span className="tag">{catLabel(t, listing.category)}</span>
+          <span className="tag">{cityLabel(t, listing.city)}</span>
+          {listing.isPromoted && <span className="tag promo">{t('browse.promoted')}</span>}
+        </div>
+        {match != null && <span className="match">{t('cmp.match')} {match}%</span>}
       </div>
       <h2 className="listing-title"><Link className="plain" to={to} state={{ from: search }}>{listing.title}</Link></h2>
       <p className="seeker">
@@ -32,6 +31,11 @@ export default function ListingCard({ listing, match, selected, compareDisabled 
           </span>
         )}
       </p>
+      {match != null && reasons.length > 0 && (
+        <ul className="match-reasons" aria-label={t('cmp.match')}>
+          {reasons.map((r) => <li key={r}>{t('match.reasons.' + r)}</li>)}
+        </ul>
+      )}
       <dl className="facts">
         {listing.targetAudience && <div><dt>{t('browse.audience')}</dt><dd>{listing.targetAudience}</dd></div>}
         <div><dt>{t('browse.reachLabel')}</dt><dd>{formatNumber(listing.expectedReach, i18n.language)}</dd></div>
@@ -42,13 +46,12 @@ export default function ListingCard({ listing, match, selected, compareDisabled 
           <small>{t('browse.from')}</small>
           <b>{t('browse.jod', { amount: formatNumber(lowest, i18n.language) })}</b>
         </p>
-        {match != null && <span className="match">{t('cmp.match')} {match}%</span>}
+        {onToggle && (
+          <label className={'compare-check muted' + (compareDisabled ? ' is-disabled' : '')} title={compareDisabled ? t('cmp.full') : undefined}>
+            <input type="checkbox" checked={selected} disabled={compareDisabled} onChange={() => onToggle(listing.id)} /> {t('cmp.add')}
+          </label>
+        )}
       </div>
-      {onToggle && (
-        <label className={'compare-check muted' + (compareDisabled ? ' is-disabled' : '')} title={compareDisabled ? t('cmp.full') : undefined}>
-          <input className="inl" type="checkbox" checked={selected} disabled={compareDisabled} onChange={() => onToggle(listing.id)} /> {t('cmp.add')}
-        </label>
-      )}
     </article>
   );
 }
