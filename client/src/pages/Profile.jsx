@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api, upload, uploadImage } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
+import { cityLabel } from '../categories.js';
 
-const SEEKER_FIELDS = [['name', 'text'], ['seekerType', 'text'], ['city', 'text'], ['phone', 'text'], ['website', 'text'], ['audienceSize', 'number'], ['description', 'area']];
-const SPONSOR_FIELDS = [['businessName', 'text'], ['industry', 'text'], ['city', 'text'], ['phone', 'text'], ['budgetMin', 'number'], ['budgetMax', 'number'], ['preferredAudience', 'text'], ['description', 'area']];
+const INDUSTRIES = ['Restaurant or cafe', 'Gym or fitness', 'Bank or financial institution', 'Telecommunications', 'Clothing, beauty, or retail', 'Other'];
+const CITIES = ['Amman', 'Irbid', 'Zarqa'];
+const SEEKER_FIELDS = [['name', 'text'], ['seekerType', 'text'], ['city', 'city'], ['phone', 'text'], ['website', 'text'], ['audienceSize', 'number'], ['description', 'area']];
+const SPONSOR_FIELDS = [['businessName', 'text'], ['industry', 'industry'], ['city', 'city'], ['phone', 'text'], ['budgetMin', 'number'], ['budgetMax', 'number'], ['preferredAudience', 'text'], ['description', 'area']];
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -65,54 +68,88 @@ export default function Profile() {
     } catch (e) { setError(e.message); }
   }
 
-  if (!form) return <div className="page" />;
+  if (!form) return <div className="page"><div className="card skeleton" aria-hidden="true"><i /><i /><i /></div></div>;
   return (
-    <div className="page narrow">
-      <h2>{t('profile.title')}</h2>
-      <form className="panel" onSubmit={save}>
-        <div className="fld">
-          <label htmlFor="logo">{t('up.logo')}</label>
-          {form.logoUrl && <img className="avatar big-avatar" src={form.logoUrl} alt="" />}
-          <input id="logo" type="file" accept="image/jpeg,image/png,image/webp" onChange={pickLogo} />
-          <small className="muted">{busy ? t('up.uploading') : t('up.hint')}</small>
-        </div>
-        {fields.map(([k, type]) => (
-          <div className="fld" key={k}>
-            <label htmlFor={k}>{t('profile.' + k)}</label>
-            {type === 'area'
-              ? <textarea id={k} rows="3" value={form[k] ?? ''} onChange={(e) => setForm({ ...form, [k]: e.target.value })} />
-              : <input id={k} type={type} value={form[k] ?? ''} onChange={(e) => setForm({ ...form, [k]: e.target.value })} />}
+    <div className="page">
+      <h1 className="page-title">{t('profile.title')}</h1>
+      <div className="profile-layout">
+        <form className="panel" onSubmit={save}>
+          <div className="fld">
+            <label htmlFor="logo">{t('up.logo')}</label>
+            {form.logoUrl && <img className="avatar big-avatar" src={form.logoUrl} alt="" />}
+            <input id="logo" type="file" accept="image/jpeg,image/png,image/webp" onChange={pickLogo} />
+            <small className="muted">{busy ? t('up.uploading') : t('up.hint')}</small>
           </div>
-        ))}
-        {error && <p className="error">{error}</p>}
-        {msg && <p className="muted">{msg}</p>}
-        <button className="btn" type="submit">{t('profile.save')}</button>
-      </form>
-
-      {ver && (
-        <div className="panel">
-          <h3>{t('ver.title')}</h3>
-          {ver.isVerified ? <p>{t('ver.verified')}</p> : ver.latest?.status === 'PENDING' ? <p>{t('ver.pending')}</p> : (
-            <>
-              <p className="muted">{ver.latest?.status === 'REJECTED' ? t('ver.rejected') : t('ver.none')}</p>
-              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={sendDocument} aria-label={t('ver.choose')} />
-            </>
-          )}
-        </div>
-      )}
-
-      {user.role === 'SEEKER' && (
-        <>
-          <h3 style={{ marginTop: 28 }}>{t('profile.myListings')}</h3>
-          {mine.length === 0 && <p className="muted">{t('profile.noListings')} <Link to="/post">{t('nav.post')}</Link></p>}
-          {mine.map((l) => (
-            <div className="panel row" key={l.id}>
-              <Link className="text-link" to={'/listings/' + l.id}>{l.title}</Link>
-              <button className="link" onClick={() => remove(l.id)}>{t('profile.delete')}</button>
+          <div className="fgrid">
+            {fields.filter(([, type]) => type !== 'area').map(([k, type]) => (
+              <div className="fld" key={k}>
+                <label htmlFor={k}>{t('profile.' + k)}</label>
+                {type === 'industry' ? (
+                  <select id={k} value={form[k] || 'Other'} onChange={(e) => setForm({ ...form, [k]: e.target.value })}>
+                    {INDUSTRIES.map((value) => <option key={value} value={value}>{t('match.industries.' + value)}</option>)}
+                  </select>
+                ) : type === 'city' ? (
+                  <select id={k} value={form[k] ?? ''} onChange={(e) => setForm({ ...form, [k]: e.target.value })}>
+                    <option value="">{t('match.chooseCity')}</option>
+                    {CITIES.map((value) => <option key={value} value={value}>{cityLabel(t, value)}</option>)}
+                  </select>
+                ) : (
+                  <input id={k} type={type} value={form[k] ?? ''} onChange={(e) => setForm({ ...form, [k]: e.target.value })} />
+                )}
+              </div>
+            ))}
+          </div>
+          {fields.filter(([, type]) => type === 'area').map(([k]) => (
+            <div className="fld" key={k}>
+              <label htmlFor={k}>{t('profile.' + k)}</label>
+              <textarea id={k} rows="4" value={form[k] ?? ''} onChange={(e) => setForm({ ...form, [k]: e.target.value })} />
             </div>
           ))}
-        </>
-      )}
+          {error && <p className="error" role="alert">{error}</p>}
+          {msg && <p className="notice" role="status">{msg}</p>}
+          <button className="btn" type="submit">{t('profile.save')}</button>
+        </form>
+
+        <div className="profile-side">
+          {ver && (
+            <section className="panel">
+              <h2>{t('ver.title')}</h2>
+              {ver.isVerified ? (
+                <p className="verified">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" /></svg>
+                  {t('ver.verified')}
+                </p>
+              ) : ver.latest?.status === 'PENDING' ? <span className="st" data-status="PENDING">{t('ver.pending')}</span> : (
+                <>
+                  <p className="muted">{ver.latest?.status === 'REJECTED' ? t('ver.rejected') : t('ver.none')}</p>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" onChange={sendDocument} aria-label={t('ver.choose')} />
+                </>
+              )}
+            </section>
+          )}
+
+          {user.role === 'SEEKER' && (
+            <section className="panel">
+              <h2>{t('profile.myListings')}</h2>
+              {mine.length === 0 ? (
+                <>
+                  <p className="muted">{t('profile.noListings')}</p>
+                  <Link className="btn alt" to="/post">{t('nav.post')}</Link>
+                </>
+              ) : (
+                <ul className="mine-list">
+                  {mine.map((l) => (
+                    <li key={l.id}>
+                      <Link className="text-link" to={'/listings/' + l.id}>{l.title}</Link>
+                      <button className="link danger" onClick={() => remove(l.id)}>{t('profile.delete')}</button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

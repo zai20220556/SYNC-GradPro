@@ -19,6 +19,8 @@ import notificationRoutes from './routes/notifications.js';
 import matchRoutes from './routes/matches.js';
 import uploadRoutes from './routes/uploads.js';
 import verificationRoutes from './routes/verification.js';
+import supportRoutes from './routes/support.js';
+import assistantRoutes from './routes/assistant.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProd = process.env.NODE_ENV === 'production';
@@ -63,6 +65,8 @@ api.use('/bookings', bookingRoutes);
 api.use('/admin', adminRoutes);
 api.use('/uploads', uploadRoutes);
 api.use('/verification', verificationRoutes);
+api.use('/support', supportRoutes);
+api.use('/assistant', assistantRoutes);
 app.use('/api', api);
 app.get('/health', (req, res) => res.json({ ok: true, name: 'SYNC API' }));
 

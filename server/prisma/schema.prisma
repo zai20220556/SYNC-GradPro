@@ -22,6 +22,7 @@ model User {
   messages             Message[]
   notifications        Notification[]
   reports              PerformanceReport[]
+  supportTickets       SupportTicket[]
 }
 
 model SeekerProfile {
@@ -176,4 +177,19 @@ model Subscription {
   plan      String         @default("BASIC")
   status    String         @default("ACTIVE")
   startDate DateTime       @default(now())
+}
+
+model SupportTicket {
+  id         Int       @id @default(autoincrement())
+  userId     Int?
+  user       User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name       String    @db.VarChar(100)
+  email      String    @db.VarChar(190)
+  type       String    @default("QUESTION")
+  subject    String    @db.VarChar(150)
+  message    String    @db.Text
+  status     String    @default("OPEN")
+  adminReply String?   @db.Text
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
 }

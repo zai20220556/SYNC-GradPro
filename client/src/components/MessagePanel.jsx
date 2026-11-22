@@ -29,10 +29,12 @@ export default function MessagePanel({ requestId }) {
   return (
     <div className="msgpanel">
       {messages.length === 0 && <p className="muted">{t('msg.empty')}</p>}
-      {messages.map((m) => <div key={m.id} className={'msg' + (m.mine ? ' me' : '')}>{m.content}</div>)}
-      <div ref={endRef} />
+      <div className="msg-list">
+        {messages.map((m) => <div key={m.id} className={'msg' + (m.mine ? ' me' : '')}>{m.content}</div>)}
+        <div ref={endRef} />
+      </div>
       {error && <p className="error">{error}</p>}
-      <form className="row" onSubmit={send}>
+      <form className="msg-form" onSubmit={send}>
         <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t('msg.placeholder')} aria-label={t('msg.placeholder')} />
         <button className="btn" type="submit">{t('msg.send')}</button>
       </form>

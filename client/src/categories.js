@@ -25,6 +25,11 @@ const KEYS = {
   'Culture and community': 'culture',
 };
 
+// Shows a stored city name in the current language.
+export function cityLabel(t, value) {
+  return t('cities.' + value, { defaultValue: value });
+}
+
 // Shows the category in the current language; unknown values are shown as saved.
 export function catLabel(t, value) {
   const key = KEYS[value];

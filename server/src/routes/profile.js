@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
+import { CITIES, INDUSTRIES } from '../services/matching.js';
 
 const router = Router();
 
@@ -37,14 +38,16 @@ const seekerSchema = z.object({
 
 const sponsorSchema = z.object({
   businessName: z.string().min(2),
-  industry: z.string().min(2).optional(),
+  industry: z.enum(INDUSTRIES, { message: 'Choose an industry from the list.' }).optional(),
   description: z.string().optional(),
-  city: z.string().optional(),
+  city: z.enum([...CITIES, ''], { message: 'Choose a city from the list.' }).optional(),
   phone: z.string().optional(),
   budgetMin: optionalInt,
   budgetMax: optionalInt,
   preferredAudience: z.string().optional(),
   logoUrl: z.string().url().max(500).optional(),
+}).refine((p) => p.budgetMin == null || p.budgetMax == null || p.budgetMin <= p.budgetMax, {
+  message: 'Budget from cannot be higher than budget up to.',
 });
 
 router.get('/', requireAuth, async (req, res) => {

@@ -1,32 +1,57 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { catLabel } from '../categories.js';
+import { catLabel, cityLabel } from '../categories.js';
+import { formatDate, formatNumber } from '../format.js';
 
-export default function ListingCard({ listing, match, selected, onToggle }) {
-  const { t } = useTranslation();
+export default function ListingCard({ listing, match, reasons = [], selected, compareDisabled = false, onToggle }) {
+  const { t, i18n } = useTranslation();
+  const { search } = useLocation();
   const lowest = Math.min(...listing.packages.map((p) => p.price));
+  const to = '/listings/' + listing.id;
+  const isVerified = Boolean(listing.seeker.user?.isVerified);
   return (
-    <article className="card">
+    <article className="card listing-card">
       {listing.imageUrl && <img className="thumb" src={listing.imageUrl} alt="" loading="lazy" />}
-      <div>
-        <span className="tag">{catLabel(t, listing.category)}</span>
-        <span className="tag">{listing.city}</span>
-        {listing.isPromoted && <span className="tag promo">Promoted</span>}
-      </div>
-      <h3><Link className="plain" to={'/listings/' + listing.id}>{listing.title}</Link></h3>
-      <p className="muted">
-        {listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}
-        {listing.seeker.name}
-        {listing.seeker.user?.isVerified ? ` · ${t('browse.verified')}` : ''}
-      </p>
-      <p>{listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
-      <div className="row">
-        <span className="price">{t('browse.from')} {lowest} JOD</span>
+      <div className="card-top">
+        <div className="card-tags">
+          <span className="tag">{catLabel(t, listing.category)}</span>
+          <span className="tag">{cityLabel(t, listing.city)}</span>
+          {listing.isPromoted && <span className="tag promo">{t('browse.promoted')}</span>}
+        </div>
         {match != null && <span className="match">{t('cmp.match')} {match}%</span>}
       </div>
-      {onToggle && (
-        <label className="muted"><input className="inl" type="checkbox" checked={selected} onChange={() => onToggle(listing.id)} /> {t('cmp.add')}</label>
+      <h2 className="listing-title"><Link className="plain" to={to} state={{ from: search }}>{listing.title}</Link></h2>
+      <p className="seeker">
+        {listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}
+        <span>{listing.seeker.name}</span>
+        {isVerified && (
+          <span className="verified" title={t('browse.helpVerified')}>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" /></svg>
+            {t('browse.verified')}
+          </span>
+        )}
+      </p>
+      {match != null && reasons.length > 0 && (
+        <ul className="match-reasons" aria-label={t('cmp.match')}>
+          {reasons.map((r) => <li key={r}>{t('match.reasons.' + r)}</li>)}
+        </ul>
       )}
+      <dl className="facts">
+        {listing.targetAudience && <div><dt>{t('browse.audience')}</dt><dd>{listing.targetAudience}</dd></div>}
+        <div><dt>{t('browse.reachLabel')}</dt><dd>{formatNumber(listing.expectedReach, i18n.language)}</dd></div>
+        {listing.eventDate && <div><dt>{t('browse.date')}</dt><dd>{formatDate(listing.eventDate, i18n.language)}</dd></div>}
+      </dl>
+      <div className="card-foot">
+        <p className="price">
+          <small>{t('browse.from')}</small>
+          <b>{t('browse.jod', { amount: formatNumber(lowest, i18n.language) })}</b>
+        </p>
+        {onToggle && (
+          <label className={'compare-check muted' + (compareDisabled ? ' is-disabled' : '')} title={compareDisabled ? t('cmp.full') : undefined}>
+            <input type="checkbox" checked={selected} disabled={compareDisabled} onChange={() => onToggle(listing.id)} /> {t('cmp.add')}
+          </label>
+        )}
+      </div>
     </article>
   );
 }

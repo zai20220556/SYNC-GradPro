@@ -1,12 +1,14 @@
-import { catLabel } from '../categories.js';
+import { catLabel, cityLabel } from '../categories.js';
+import { formatNumber } from '../format.js';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 
 export default function Compare() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [params] = useSearchParams();
+  const location = useLocation();
   const [items, setItems] = useState([]);
   const ids = (params.get('ids') || '').split(',').filter(Boolean).slice(0, 3);
 
@@ -16,22 +18,39 @@ export default function Compare() {
   }, [params.get('ids')]);
 
   if (ids.length < 2) {
-    return <div className="page"><h2>{t('cmp.title')}</h2><p>{t('cmp.need')}</p><Link className="btn" to="/browse">{t('nav.browse')}</Link></div>;
+    return (
+      <div className="page">
+        <div className="panel state">
+          <h1 className="page-title">{t('cmp.title')}</h1>
+          <p className="muted">{t('cmp.need')}</p>
+          <Link className="btn" to="/browse">{t('nav.browse')}</Link>
+        </div>
+      </div>
+    );
   }
 
   const rows = [
-    ['category', (l) => catLabel(t, l.category)],
-    ['city', (l) => l.city],
-    ['reach', (l) => l.expectedReach.toLocaleString()],
+    ['lowest', (l) => <b>{t('browse.jod', { amount: formatNumber(Math.min(...l.packages.map((p) => p.price)), i18n.language) })}</b>],
+    ['packages', (l) => formatNumber(l.packages.length, i18n.language)],
+    ['reach', (l) => formatNumber(l.expectedReach, i18n.language)],
     ['audience', (l) => l.targetAudience || '-'],
-    ['lowest', (l) => Math.min(...l.packages.map((p) => p.price)) + ' JOD'],
-    ['packages', (l) => l.packages.length],
-    ['verified', (l) => (l.seeker.user?.isVerified ? t('cmp.row.yes') : t('cmp.row.no'))],
+    ['category', (l) => catLabel(t, l.category)],
+    ['city', (l) => cityLabel(t, l.city)],
+    ['verified', (l) => (l.seeker.user?.isVerified ? (
+      <span className="verified">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" /></svg>
+        {t('cmp.row.yes')}
+      </span>
+    ) : t('cmp.row.no'))],
   ];
 
   return (
     <div className="page">
-      <h2>{t('cmp.title')}</h2>
+      <Link className="back-link" to={'/browse' + (location.state?.from || '')}>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" /></svg>
+        {t('detail.back')}
+      </Link>
+      <h1 className="page-title">{t('cmp.title')}</h1>
       <div className="panel table-wrap">
         <table>
           <thead>
@@ -39,7 +58,7 @@ export default function Compare() {
           </thead>
           <tbody>
             {rows.map(([key, fn]) => (
-              <tr key={key}><th>{t('cmp.row.' + key)}</th>{items.map((l) => <td key={l.id}>{fn(l)}</td>)}</tr>
+              <tr key={key}><th scope="row">{t('cmp.row.' + key)}</th>{items.map((l) => <td key={l.id}>{fn(l)}</td>)}</tr>
             ))}
           </tbody>
         </table>
