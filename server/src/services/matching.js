@@ -1,6 +1,9 @@
 // Rule-based matching: scores how well a listing fits a sponsor profile, from 0 to 100.
 // Four rules: category fit (30), city (20), budget (30), audience (20).
 
+// Used when a sponsor leaves "Budget from" blank. 50 JOD is a small local sponsorship.
+const DEFAULT_MIN_BUDGET_JOD = 50;
+
 const CATEGORY_FIT = {
   'Restaurant or cafe': ['Events', 'Creators', 'Student activities', 'Music and arts', 'Culture and community'],
   'Gym or fitness': ['Sports', 'Events', 'Education and workshops'],
@@ -26,10 +29,10 @@ export function scoreListing(sponsor, listing) {
   if (!sponsor.city) score += 10;
   else if (sponsor.city === listing.city) { score += 20; reasons.push('city'); }
 
-  // 3. Budget: does the cheapest package fit the sponsor's budget?
-  const lowest = Math.min(...listing.packages.map((p) => p.price));
+  // 3. Budget: does at least one package fall inside the sponsor's budget?
+  const budgetMin = sponsor.budgetMin ?? DEFAULT_MIN_BUDGET_JOD;
   if (sponsor.budgetMax == null) score += 15;
-  else if (lowest <= sponsor.budgetMax && (sponsor.budgetMin == null || lowest >= 0)) { score += 30; reasons.push('budget'); }
+  else if (listing.packages.some((p) => p.price >= budgetMin && p.price <= sponsor.budgetMax)) { score += 30; reasons.push('budget'); }
 
   // 4. Audience: shared words between preferred audience and target audience
   if (!sponsor.preferredAudience) score += 10;
