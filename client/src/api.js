@@ -1,7 +1,8 @@
 // All calls go through /api, which Vite forwards to the Express server.
-export async function api(path, { method = 'GET', body } = {}) {
+export async function api(path, { method = 'GET', body, signal } = {}) {
   const res = await fetch('/api' + path, {
     method,
+    signal,
     credentials: 'include',
     headers: body ? { 'Content-Type': 'application/json' } : undefined,
     body: body ? JSON.stringify(body) : undefined,

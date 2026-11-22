@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../AuthContext.jsx';
 
@@ -7,7 +7,9 @@ export default function Register() {
   const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'SEEKER' });
+  const [params] = useSearchParams();
+  const initialRole = params.get('role') === 'SPONSOR' ? 'SPONSOR' : 'SEEKER';
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: initialRole });
   const [error, setError] = useState('');
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 

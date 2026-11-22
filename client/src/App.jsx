@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Header from './components/Header.jsx';
 import Home from './pages/Home.jsx';
 import Browse from './pages/Browse.jsx';
@@ -14,6 +15,7 @@ import Compare from './pages/Compare.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
+  const { t } = useTranslation();
   return (
     <>
       <Header />
@@ -33,6 +35,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
+      <footer className="demo-note">{t('demoNotice')}</footer>
     </>
   );
 }

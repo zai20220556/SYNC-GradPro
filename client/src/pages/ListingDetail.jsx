@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
 import Benefits from '../components/Benefits.jsx';
-import { formatDate } from '../format.js';
-import { catLabel } from '../categories.js';
+import { formatDate, formatNumber } from '../format.js';
+import { catLabel, cityLabel } from '../categories.js';
 
 export default function ListingDetail() {
   const { id } = useParams();
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [listing, setListing] = useState(null);
   const [error, setError] = useState('');
   const [pkgId, setPkgId] = useState(null);
@@ -38,16 +39,16 @@ export default function ListingDetail() {
 
   return (
     <div className="page">
-      <Link className="muted" to="/browse">{t('detail.back')}</Link>
+      <Link className="muted" to={'/browse' + (location.state?.from || '')}>{t('detail.back')}</Link>
       <h1 style={{ fontSize: 44, marginTop: 8 }}>{listing.title}</h1>
       <p>
         <span className="tag">{catLabel(t, listing.category)}</span>
-        <span className="tag">{listing.city}</span>
+        <span className="tag">{cityLabel(t, listing.city)}</span>
         {listing.seeker.user?.isVerified && <span className="tag">{t('browse.verified')}</span>}
       </p>
       {listing.imageUrl && <img className="hero-img" src={listing.imageUrl} alt="" />}
       <div className="panel">
-        <p>{listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}<b>{listing.seeker.name}</b> · {listing.expectedReach.toLocaleString()} {t('browse.reach')}</p>
+        <p>{listing.seeker.logoUrl && <img className="avatar" src={listing.seeker.logoUrl} alt="" />}<b>{listing.seeker.name}</b> · {t('browse.reachLabel')}: {formatNumber(listing.expectedReach, i18n.language)}</p>
         {listing.seeker.website && (
           <p>{t('detail.website')}: <a className="text-link" href={listing.seeker.website} target="_blank" rel="noopener noreferrer">{listing.seeker.website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}</a></p>
         )}
@@ -62,7 +63,7 @@ export default function ListingDetail() {
           {listing.packages.map((p) => (
             <label className="pkg" key={p.id}>
               <input type="radio" name="pk" checked={pkgId === p.id} onChange={() => setPkgId(p.id)} />
-              <span><b>{p.name} · {p.price} JOD</b><span className="muted"><Benefits text={p.benefits} /></span></span>
+              <span><b>{p.name} · {t('browse.jod', { amount: formatNumber(p.price, i18n.language) })}</b><span className="muted"><Benefits text={p.benefits} /></span></span>
             </label>
           ))}
           <div className="fld">
@@ -78,7 +79,7 @@ export default function ListingDetail() {
             {listing.packages.map((p) => (
               <div className="card" key={p.id}>
                 <h3>{p.name}</h3>
-                <p className="price">{p.price} JOD</p>
+                <p className="price">{t('browse.jod', { amount: formatNumber(p.price, i18n.language) })}</p>
                 <div className="muted"><Benefits text={p.benefits} /></div>
               </div>
             ))}

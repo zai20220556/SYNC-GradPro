@@ -1,12 +1,14 @@
-import { catLabel } from '../categories.js';
+import { catLabel, cityLabel } from '../categories.js';
+import { formatNumber } from '../format.js';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api.js';
 
 export default function Compare() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [params] = useSearchParams();
+  const location = useLocation();
   const [items, setItems] = useState([]);
   const ids = (params.get('ids') || '').split(',').filter(Boolean).slice(0, 3);
 
@@ -21,17 +23,18 @@ export default function Compare() {
 
   const rows = [
     ['category', (l) => catLabel(t, l.category)],
-    ['city', (l) => l.city],
-    ['reach', (l) => l.expectedReach.toLocaleString()],
+    ['city', (l) => cityLabel(t, l.city)],
+    ['reach', (l) => formatNumber(l.expectedReach, i18n.language)],
     ['audience', (l) => l.targetAudience || '-'],
-    ['lowest', (l) => Math.min(...l.packages.map((p) => p.price)) + ' JOD'],
+    ['lowest', (l) => t('browse.jod', { amount: formatNumber(Math.min(...l.packages.map((p) => p.price)), i18n.language) })],
     ['packages', (l) => l.packages.length],
     ['verified', (l) => (l.seeker.user?.isVerified ? t('cmp.row.yes') : t('cmp.row.no'))],
   ];
 
   return (
     <div className="page">
-      <h2>{t('cmp.title')}</h2>
+      <Link className="muted" to={'/browse' + (location.state?.from || '')}>{t('detail.back')}</Link>
+      <h2 style={{ marginTop: 8 }}>{t('cmp.title')}</h2>
       <div className="panel table-wrap">
         <table>
           <thead>

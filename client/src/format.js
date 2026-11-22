@@ -3,6 +3,10 @@ export function formatDate(value, lang) {
   return new Date(value).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+export function formatNumber(value, lang) {
+  return new Intl.NumberFormat(lang === 'ar' ? 'ar-JO-u-nu-latn' : 'en-GB').format(value);
+}
+
 // Turns "- a\n- b" into ['a', 'b'] so bullets render correctly in both directions.
 export function benefitLines(text) {
   return String(text || '')
